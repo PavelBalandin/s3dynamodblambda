@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '1'
 
 java {
 	sourceCompatibility = '17'
@@ -16,10 +16,25 @@ repositories {
 }
 
 dependencies {
+	implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.565'
+	implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.565'
+	implementation 'com.amazonaws:aws-lambda-java-events:3.11.3'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	manifest {
+		attributes('Main-Class': 'org.example.MainHandler')
+	}
+
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
 }
